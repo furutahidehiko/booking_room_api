@@ -61,16 +61,16 @@ async def read_bookings(skip: int = 0, limit: int = 0, db: Session = Depends(get
 
 # Post Api
 @app.post("/users",response_model=schemas.User)
-async def create_user(user:schemas.User,db: Session = Depends(get_db)):
+async def create_user(user:schemas.CreateUser,db: Session = Depends(get_db)):
   result_user = crud.create_user(db=db, user=user)
   return result_user
 
 @app.post("/rooms",response_model=schemas.Room)
-async def create_room(room:schemas.room,db: Session = Depends(get_db)):
+async def create_room(room:schemas.CreateRoom,db: Session = Depends(get_db)):
   result_room = crud.create_room(db=db, room=room)
   return result_room
 
 @app.post("/bookings",response_model=schemas.Booking)
-async def create_booking(booking:schemas.booking,db: Session = Depends(get_db)):
+async def create_booking(booking:schemas.CreateBooking,db: Session = Depends(get_db)):
   result_booking = crud.create_booking(db=db, booking=booking)
   return result_booking
