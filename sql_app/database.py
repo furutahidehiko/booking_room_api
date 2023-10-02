@@ -8,5 +8,5 @@ engine = create_engine(
   SQL_ALCHEMY_DATABASE_URL,connect_args={'check_same_thread':False}
 ) # crud操作を行うための基盤を作成
 
-SessionLocal = sessionmaker(autoflush=False,bind=engine) # DBへのセッションを定義する
+SessionLocal = sessionmaker(autocommit=False, autoflush=False,bind=engine) # DBへのセッションを定義する
 Base = declarative_base() # DB作成時に必要となるクラスを定義

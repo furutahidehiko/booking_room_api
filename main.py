@@ -42,19 +42,19 @@ response_model=List[schemas.User]:レスポンスにschemas.Userのデータ構�
 
 """
 @app.get("/users", response_model=List[schemas.User])
-async def read_users(skip: int = 0, limit: int = 0, db: Session = Depends(get_db)):
+async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
   """  Depends(get_db)でdbに代入するget_dbを強制指定する """
   users = crud.get_users(db=db, skip=skip, limit=limit)
   return users
 
 @app.get("/rooms",response_model=List[schemas.Room])
-async def read_rooms(skip: int = 0, limit: int = 0, db: Session = Depends(get_db)):
+async def read_rooms(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
   """  Depends(get_db)でdbに代入するget_dbを強制指定する """
   rooms = crud.get_rooms(db=db, skip=skip, limit=limit)
   return rooms
 
 @app.get("/bookings",response_model=List[schemas.Booking])
-async def read_bookings(skip: int = 0, limit: int = 0, db: Session = Depends(get_db)):
+async def read_bookings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
   """  Depends(get_db)でdbに代入するget_dbを強制指定する """
   bookings = crud.get_bookings(db=db, skip=skip, limit=limit)
   return bookings
