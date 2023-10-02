@@ -55,47 +55,69 @@ elif page == 'rooms':
     st.json(res.json())
 
 elif page == 'bookings':
-  st.title('APIテスト画面(予約)')
+  st.title('会議室予約画面')
+  # ユーザー 一覧取得
+  users_url = 'http://127.0.0.1:8000/users'
+  res = requests.get(users_url)
+  users = res.json()
+  # ユーザー名をkey、ユーザーIDをvalue
+  users_dict = {}
+  for user in users:
+    users_dict[user['username']] = user['user_id']
 
-  with st.form(key='bookings'):
-    booking_id: int = random.randint(0,10) # 0~10のランダムな整数を生成
-    user_id: int = random.randint(0,10) # 0~10のランダムな整数を生成
-    room_id: int = random.randint(0,10) # 0~10のランダムな整数を生成
-    book_num: int = st.number_input('予約人数',step=1)
-    date = st.date_input('日付を入力',min_value=datetime.date.today())
-    start_time = st.time_input('開始時刻',value=datetime.time(hour=9,minute=0))
-    end_time = st.time_input('終了時刻', value=datetime.time(hour=20,minute=0))
-    data = {
-      'booking_id':booking_id,
-      'user_id':user_id,
-      'room_id':room_id,
-      'booked_num':book_num,
-      'start_datetime':datetime.datetime(
-        year=date.year,
-        month=date.month,
-        day=date.day,
-        hour=start_time.hour,
-        minute=start_time.minute
-      ),
-      'end_datetime':datetime.datetime(
-        year=date.year,
-        month=date.month,
-        day=date.day,
-        hour=end_time.hour,
-        minute=end_time.minute
-      )
+  # 会議室一覧取得
+  rooms_url = 'http://127.0.0.1:8000/rooms'
+  res = requests.get(rooms_url)
+  rooms = res.json()
+  rooms_dict = {}
+  for room in rooms:
+    rooms_dict[room['room_name']] = {
+      'room_id': room['room_id'],
+      'capacity':room['capacity']
     }
-    submit_button = st.form_submit_button(label='送信') # form専用ボタン
+  st.write(rooms_dict)
 
 
-  if submit_button: # ボタンが押されたかどうか
-    st.write('## 送信データ') # デバック用
-    st.json(data) # どんなデータが入っているか確認するため
-    st.write('## レスポンス結果')
-    url = 'http://127.0.0.1:8000/bookings'
-    res = requests.post(url,data=json.dumps(data,default=json_serial))
-    st.write(res.status_code)
-    st.json(res.json())
+
+  # with st.form(key='bookings'):
+  #   booking_id: int = random.randint(0,10) # 0~10のランダムな整数を生成
+  #   user_id: int = random.randint(0,10) # 0~10のランダムな整数を生成
+  #   room_id: int = random.randint(0,10) # 0~10のランダムな整数を生成
+  #   book_num: int = st.number_input('予約人数',step=1)
+  #   date = st.date_input('日付を入力',min_value=datetime.date.today())
+  #   start_time = st.time_input('開始時刻',value=datetime.time(hour=9,minute=0))
+  #   end_time = st.time_input('終了時刻', value=datetime.time(hour=20,minute=0))
+  #   data = {
+  #     'booking_id':booking_id,
+  #     'user_id':user_id,
+  #     'room_id':room_id,
+  #     'booked_num':book_num,
+  #     'start_datetime':datetime.datetime(
+  #       year=date.year,
+  #       month=date.month,
+  #       day=date.day,
+  #       hour=start_time.hour,
+  #       minute=start_time.minute
+  #     ),
+  #     'end_datetime':datetime.datetime(
+  #       year=date.year,
+  #       month=date.month,
+  #       day=date.day,
+  #       hour=end_time.hour,
+  #       minute=end_time.minute
+  #     )
+  #   }
+  #   submit_button = st.form_submit_button(label='送信') # form専用ボタン
+
+
+  # if submit_button: # ボタンが押されたかどうか
+  #   st.write('## 送信データ') # デバック用
+  #   st.json(data) # どんなデータが入っているか確認するため
+  #   st.write('## レスポンス結果')
+  #   url = 'http://127.0.0.1:8000/bookings'
+  #   res = requests.post(url,data=json.dumps(data,default=json_serial))
+  #   st.write(res.status_code)
+  #   st.json(res.json())
 
 else:
   st.write('404 Not found')
