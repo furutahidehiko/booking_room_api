@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sql_app import schemas, models
 
@@ -37,14 +38,29 @@ def create_room(db: Session, room: schemas.Room):
 
 """ 会議室予約 """
 def create_booking(db: Session, booking: schemas.Booking):
-  db_booking = models.Booking(
+  """
+  \:改行ができる
+  以下の条件でDBにフィルター(抽出)をかける
+  models.Booking.room_id == booking.room_id：予約するルームidと同じもの
+  models.Booking.end_datetime > booking.start_datetime：DBに登録済済みの終了時刻より予約開始時刻が早いもの
+  models.Booking.start_datetime < booking.end_datetime：DBに登録済済みの予約開始時刻より終了時刻が早いもの
+  """
+  db_booked = db.query(models.Booking).\
+    filter(models.Booking.room_id == booking.room_id).\
+    filter(models.Booking.end_datetime > booking.start_datetime).\
+    filter(models.Booking.start_datetime < booking.end_datetime).\
+    all()
+  if len(db_booked) == 0: # 重複データなし
+    db_booking = models.Booking(
       user_id = booking.user_id,
       room_id = booking.room_id,
       booked_num = booking.booked_num,
       start_datetime = booking.start_datetime,
       end_datetime = booking.end_datetime
     )
-  db.add(db_booking) # dbへ登録
-  db.commit() # 登録をcommit
-  db.refresh(db_booking)
-  return db_booking
+    db.add(db_booking) # dbへ登録
+    db.commit() # 登録をcommit
+    db.refresh(db_booking)
+    return db_booking
+  else:
+    raise HTTPException(status_code=404, detail="Cannot register due to duplicate appointment time")
