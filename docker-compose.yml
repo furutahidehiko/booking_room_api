@@ -10,7 +10,6 @@ services:
       - ./application:/application
     ports:
       - "8000:8000"
-    depends_on:
     command: sh -c "/usr/local/bin/entrypoint.sh"
     env_file:
       - .env
